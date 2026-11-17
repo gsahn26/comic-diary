@@ -2,7 +2,8 @@
 
 오늘 있었던 일을 일기로 쓰면, AI가 **기승전결 4컷 웹툰**으로 바꿔 주는 무료 웹앱입니다.
 
-- 🔗 **배포 링크:** https://gsahn26.github.io/comic-diary/ <!-- 배포 후 확인 -->
+- 🔗 **배포 링크:** https://gsahn26.github.io/comic-diary/
+- 📦 **저장소:** https://github.com/gsahn26/comic-diary
 - 💸 **비용:** 0원 (API 키 없음, 서버 없음)
 
 ## 어떻게 쓰나요?
