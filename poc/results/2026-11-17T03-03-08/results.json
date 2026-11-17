@@ -1,0 +1,915 @@
+{
+  "startedAt": "2026-11-17T03:03:08.311Z",
+  "gapSec": 46,
+  "diaries": [
+    {
+      "id": "d01",
+      "hard": false,
+      "drawImages": true,
+      "events": [
+        "커피를 쏟음",
+        "발표 자료가 날아감",
+        "팀장이 백업 파일을 찾아 줌",
+        "발표를 무사히 마치고 박수받음"
+      ],
+      "features": [
+        "검은 네모 안경",
+        "파란 셔츠"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 14658
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"커피와 발표\",\"character\":\"30대 남자, 짧은 머리, 검은 네모 안경, 파란 셔츠\",\"panels\":[{\"scene\":\"Man spilling coffee over his keyboard, surprised face, office desk cluttered, laptop shutting down, close-up of dripping coffee\",\"caption\":\"출근하자마자 커피를 쏟았다.\",\"dialogue\":\"아! 덥실...?\"},{\"scene\":\"Man looking worried at closed laptop, sweat droplet on forehead, desk with empty slides on monitor, gray office background\",\"caption\":\"발표 자료가 날아간 기분이었어.\",\"dialogue\":\"이게 맞는 거야?\"},{\"scene\":\"Manager arriving, pointing at shared folder on screen, man looking relieved, office background, computer glow\",\"caption\":\"팀장님이 백업 파일을 찾아 주셨다.\",\"dialogue\":\"여기 있어! 아!\"},{\"scene\":\"Man giving presentation, audience clapping, bright smile, office conference room, motivational atmosphere\",\"caption\":\"발표는 무사히 끝났네!\",\"dialogue\":\"감사합니다!\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "커피와 발표",
+        "character": "30대 남자, 짧은 머리, 검은 네모 안경, 파란 셔츠",
+        "panels": [
+          {
+            "scene": "Man spilling coffee over his keyboard, surprised face, office desk cluttered, laptop shutting down, close-up of dripping coffee",
+            "caption": "출근하자마자 커피를 쏟았다.",
+            "dialogue": "아! 덥실...?"
+          },
+          {
+            "scene": "Man looking worried at closed laptop, sweat droplet on forehead, desk with empty slides on monitor, gray office background",
+            "caption": "발표 자료가 날아간 기분이었어.",
+            "dialogue": "이게 맞는 거야?"
+          },
+          {
+            "scene": "Manager arriving, pointing at shared folder on screen, man looking relieved, office background, computer glow",
+            "caption": "팀장님이 백업 파일을 찾아 주셨다.",
+            "dialogue": "여기 있어! 아!"
+          },
+          {
+            "scene": "Man giving presentation, audience clapping, bright smile, office conference room, motivational atmosphere",
+            "caption": "발표는 무사히 끝났네!",
+            "dialogue": "감사합니다!"
+          }
+        ]
+      },
+      "splitMs": 14679,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      },
+      "translate": {
+        "needed": true,
+        "ok": true,
+        "attempts": 1
+      },
+      "image": {
+        "seed": 578012,
+        "character": "Man in his 30s, short hair, black rectangular glasses, blue shirt",
+        "panels": [
+          {
+            "prompt": "webtoon comic panel of Man in his 30s, short hair, black rectangular glasses, blue shirt: Man spilling coffee over his keyboard, surprised face, office desk cluttered, laptop shutting down, close‑up of dripping coffee, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 8534
+              }
+            ],
+            "ok": true,
+            "file": "images/d01-1.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of Man in his 30s, short hair, black rectangular glasses, blue shirt: Man looking worried at closed laptop, sweat droplet on forehead, desk with empty slides on monitor, gray office background, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7768
+              }
+            ],
+            "ok": true,
+            "file": "images/d01-2.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of Man in his 30s, short hair, black rectangular glasses, blue shirt: Manager arriving, pointing at shared folder on screen, man looking relieved, office background, computer glow, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7487
+              }
+            ],
+            "ok": true,
+            "file": "images/d01-3.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of Man in his 30s, short hair, black rectangular glasses, blue shirt: Man giving presentation, audience clapping, bright smile, office conference room, motivational atmosphere, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7256
+              }
+            ],
+            "ok": true,
+            "file": "images/d01-4.jpg"
+          }
+        ]
+      },
+      "totalMs": 200945,
+      "c4_under5min": true
+    },
+    {
+      "id": "d02",
+      "hard": false,
+      "drawImages": false,
+      "events": [
+        "강아지와 산책",
+        "강아지가 웅덩이에 뛰어듦",
+        "둘 다 진흙투성이",
+        "같이 목욕 후 강아지가 잠듦"
+      ],
+      "features": [
+        "긴 생머리",
+        "노란 우비"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 12311
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"강아지와 진흙 소동\",\"character\":\"20대 여성, 긴 생머리, 노란 우비, 청바지, 미소 짓는 눈\",\"panels\":[{\"scene\":\"full body shot of woman walking with puppy in a park, sunny, slight breeze, smiling, holding leash\",\"caption\":\"비가 그친 오후, 산책을 가요\",\"dialogue\":\"오늘도 산책 즐거워요!\"},{\"scene\":\"close up of puppy jumping into a muddy puddle, splash, woman surprised, both laughing\",\"caption\":\"콩이가 땅탕물에 잠수!\",\"dialogue\":\"애~ 도망 좀!\"},{\"scene\":\"woman slipping on mud, puppy licks her sweat, both covered in mud, exasperated frown, chair nearby\",\"caption\":\"진흙 투성이, 나도 신세\",\"dialogue\":\"이거 진짜 싫다!\"},{\"scene\":\"inside house, woman and puppy taking a bath, water splashing, puppy on knee, both relaxed, puppy sleeping\",\"caption\":\"마지막은 포근한 꿈\",\"dialogue\":\"\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "강아지와 진흙 소동",
+        "character": "20대 여성, 긴 생머리, 노란 우비, 청바지, 미소 짓는 눈",
+        "panels": [
+          {
+            "scene": "full body shot of woman walking with puppy in a park, sunny, slight breeze, smiling, holding leash",
+            "caption": "비가 그친 오후, 산책을 가요",
+            "dialogue": "오늘도 산책 즐거워요!"
+          },
+          {
+            "scene": "close up of puppy jumping into a muddy puddle, splash, woman surprised, both laughing",
+            "caption": "콩이가 땅탕물에 잠수!",
+            "dialogue": "애~ 도망 좀!"
+          },
+          {
+            "scene": "woman slipping on mud, puppy licks her sweat, both covered in mud, exasperated frown, chair nearby",
+            "caption": "진흙 투성이, 나도 신세",
+            "dialogue": "이거 진짜 싫다!"
+          },
+          {
+            "scene": "inside house, woman and puppy taking a bath, water splashing, puppy on knee, both relaxed, puppy sleeping",
+            "caption": "마지막은 포근한 꿈",
+            "dialogue": ""
+          }
+        ]
+      },
+      "splitMs": 12322,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      }
+    },
+    {
+      "id": "d03",
+      "hard": false,
+      "drawImages": true,
+      "events": [
+        "악보를 두고 옴",
+        "옆 사람과 악보를 같이 봄",
+        "높은 음에서 실수해 다 같이 웃음",
+        "연습 후 붕어빵을 먹음"
+      ],
+      "features": [
+        "동그란 안경",
+        "보라색 카디건"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 15050
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"성가대 웃음\",\n \"character\":\"50대 여성, 흰머리 단발, 동그란 금테 안경, 보라색 카디건 착용, 납득한 눈빛\",\n \"panels\":[\n  {\"scene\":\"late evening church hall, main character with sheet left on table, slight frown, others busy, wide angle\",\n   \"caption\":\"연습이 끝나고 악보를 놓고 왔어요\",\n   \"dialogue\":\"\"},\n  {\"scene\":\"neighbor priest with friendly smile offers to look at sheet together, main character nodding, close up on hands\",\n   \"caption\":\"집사님이 같이 보자고 제안\",\n   \"dialogue\":\"같이 봐요?\"},\n  {\"scene\":\"they sit side by side, main character hits high note, expression shocked, others burst into laughter, close up\",\n   \"caption\":\"내서 높은 음이 웃음을 자아냈다\",\n   \"dialogue\":\"아아앗…\"},\n  {\"scene\":\"group shares 붕어빵 around table, main character smiles, everyone cheerful, moderate shot\",\n   \"caption\":\"연습 후 붕어빵을 먹었어요\",\n   \"dialogue\":\"맛있어요!\"}\n ]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "성가대 웃음",
+        "character": "50대 여성, 흰머리 단발, 동그란 금테 안경, 보라색 카디건 착용, 납득한 눈빛",
+        "panels": [
+          {
+            "scene": "late evening church hall, main character with sheet left on table, slight frown, others busy, wide angle",
+            "caption": "연습이 끝나고 악보를 놓고 왔어요",
+            "dialogue": ""
+          },
+          {
+            "scene": "neighbor priest with friendly smile offers to look at sheet together, main character nodding, close up on hands",
+            "caption": "집사님이 같이 보자고 제안",
+            "dialogue": "같이 봐요?"
+          },
+          {
+            "scene": "they sit side by side, main character hits high note, expression shocked, others burst into laughter, close up",
+            "caption": "내서 높은 음이 웃음을 자아냈다",
+            "dialogue": "아아앗…"
+          },
+          {
+            "scene": "group shares 붕어빵 around table, main character smiles, everyone cheerful, moderate shot",
+            "caption": "연습 후 붕어빵을 먹었어요",
+            "dialogue": "맛있어요!"
+          }
+        ]
+      },
+      "splitMs": 15056,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 3,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      },
+      "translate": {
+        "needed": true,
+        "ok": true,
+        "attempts": 1
+      },
+      "image": {
+        "seed": 558822,
+        "character": "50s woman, white hair bob cut, round gold rim glasses, purple cardigan, thoughtful expression",
+        "panels": [
+          {
+            "prompt": "webtoon comic panel of 50s woman, white hair bob cut, round gold rim glasses, purple cardigan: late evening church hall, main character with sheet left on table, slight frown, others busy, wide angle, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7232
+              }
+            ],
+            "ok": true,
+            "file": "images/d03-1.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 50s woman, white hair bob cut, round gold rim glasses, purple cardigan: neighbor priest with friendly smile offers to look at sheet together, main character nodding, close up on hands, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7174
+              }
+            ],
+            "ok": true,
+            "file": "images/d03-2.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 50s woman, white hair bob cut, round gold rim glasses, purple cardigan: they sit side by side, main character hits high note, expression shocked, others burst into laughter, close up, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 8320
+              }
+            ],
+            "ok": true,
+            "file": "images/d03-3.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 50s woman, white hair bob cut, round gold rim glasses, purple cardigan: group shares fugu bread around table, main character smiles, everyone cheerful, moderate shot, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 6319
+              }
+            ],
+            "ok": true,
+            "file": "images/d03-4.jpg"
+          }
+        ]
+      },
+      "totalMs": 197989,
+      "c4_under5min": true
+    },
+    {
+      "id": "d04",
+      "hard": false,
+      "drawImages": false,
+      "events": [
+        "목록을 두고 마트에 감",
+        "기억으로 장을 봄",
+        "우유만 빠진 걸 알게 됨",
+        "편의점에 다시 감"
+      ],
+      "features": [
+        "곱슬머리",
+        "회색 후드티"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 19037
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"마지막 우유 구출!!\",\"character\":\"40대 남자, 곱슬 머리, 회색 후드티, 평범한 사무실복\",\"panels\":[{\"scene\":\"Middle-aged man in gray hoodie, carrying a grocery cart full of items, determined look, supermarket aisle, bright fluorescent lighting\",\"caption\":\"장보기 목록을 냉장고에 붙여두고 매트에 갔다\",\"dialogue\":\"잘 챙겨야지!\"},{\"scene\":\"The same man at home, looking at his empty fridge, confused facial expression, living room with refrigerator visible\",\"caption\":\"집에 와서 목록을 보니 우유가 빠져 있었다\",\"dialogue\":\"어디 갔지?\"},{\"scene\":\"Man in a worn shirt, wearing slippers, sprinting down the street to convenience store, feet barely touching ground, cars zipping by\",\"caption\":\"슬리퍼를 신고 편의점까지 다시 뛰어갔다\",\"dialogue\":\"지금 바로!\"},{\"scene\":\"Man at convenience store, holding a carton of milk triumphantly, relieved smile, cashier behind counter, other customers watching\",\"caption\":\"결국 우유를 구해왔다!\",\"dialogue\":\"생각보다 쉽다!\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "마지막 우유 구출!!",
+        "character": "40대 남자, 곱슬 머리, 회색 후드티, 평범한 사무실복",
+        "panels": [
+          {
+            "scene": "Middle-aged man in gray hoodie, carrying a grocery cart full of items, determined look, supermarket aisle, bright fluorescent lighting",
+            "caption": "장보기 목록을 냉장고에 붙여두고 매트에 갔다",
+            "dialogue": "잘 챙겨야지!"
+          },
+          {
+            "scene": "The same man at home, looking at his empty fridge, confused facial expression, living room with refrigerator visible",
+            "caption": "집에 와서 목록을 보니 우유가 빠져 있었다",
+            "dialogue": "어디 갔지?"
+          },
+          {
+            "scene": "Man in a worn shirt, wearing slippers, sprinting down the street to convenience store, feet barely touching ground, cars zipping by",
+            "caption": "슬리퍼를 신고 편의점까지 다시 뛰어갔다",
+            "dialogue": "지금 바로!"
+          },
+          {
+            "scene": "Man at convenience store, holding a carton of milk triumphantly, relieved smile, cashier behind counter, other customers watching",
+            "caption": "결국 우유를 구해왔다!",
+            "dialogue": "생각보다 쉽다!"
+          }
+        ]
+      },
+      "splitMs": 19057,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      }
+    },
+    {
+      "id": "d05",
+      "hard": false,
+      "drawImages": true,
+      "events": [
+        "딸에게 자전거를 가르침",
+        "손을 놓자 넘어져 욺",
+        "반창고를 붙이고 달램",
+        "아이 혼자 한 바퀴를 돎"
+      ],
+      "features": [
+        "포니테일",
+        "초록색 맨투맨"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 16752
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"첫 자전거 도전\",\"character\":\"32세 엄마, 포니테일 머리, 초록색 맨투맨, 차분한 표정\",\"panels\":[{\"scene\":\"Mother kneeling beside child on grass, gently holding bike handle, smiling, park background, close-up of hands\",\"caption\":\"공원에서 딸아이에게 자전거를 가르쳤다\",\"dialogue\":\"이렇게 하면 돼요!\"},\n{\"scene\":\"Mother releases hand, child loses balance, falls onto grass, mom shocked expression, soft sunlight\",\"caption\":\"손을 놓자마자 아이가 넘어져 울었다\",\"dialogue\":\"아이고!\"},\n{\"scene\":\"Mom is applying a Band-Aid on child's forehead, encouraging smile, child nodding, sun low overhead\",\"caption\":\"반창고를 붙여 주고 한 번 더 해 보자고 달랬다\",\"dialogue\":\"다시 해볼래?\"},\n{\"scene\":\"Child pedaling alone, mother cheering from sidelines, evening with golden sunset, child smiling triumphant\",\"caption\":\"해 질 무렵에는 아이 혼자서 공원 한 바퀴를 돌았다\",\"dialogue\":\"\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "첫 자전거 도전",
+        "character": "32세 엄마, 포니테일 머리, 초록색 맨투맨, 차분한 표정",
+        "panels": [
+          {
+            "scene": "Mother kneeling beside child on grass, gently holding bike handle, smiling, park background, close-up of hands",
+            "caption": "공원에서 딸아이에게 자전거를 가르쳤다",
+            "dialogue": "이렇게 하면 돼요!"
+          },
+          {
+            "scene": "Mother releases hand, child loses balance, falls onto grass, mom shocked expression, soft sunlight",
+            "caption": "손을 놓자마자 아이가 넘어져 울었다",
+            "dialogue": "아이고!"
+          },
+          {
+            "scene": "Mom is applying a Band-Aid on child's forehead, encouraging smile, child nodding, sun low overhead",
+            "caption": "반창고를 붙여 주고 한 번 더 해 보자고 달랬다",
+            "dialogue": "다시 해볼래?"
+          },
+          {
+            "scene": "Child pedaling alone, mother cheering from sidelines, evening with golden sunset, child smiling triumphant",
+            "caption": "해 질 무렵에는 아이 혼자서 공원 한 바퀴를 돌았다",
+            "dialogue": ""
+          }
+        ]
+      },
+      "splitMs": 16768,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      },
+      "translate": {
+        "needed": true,
+        "ok": true,
+        "attempts": 1
+      },
+      "image": {
+        "seed": 444481,
+        "character": "32-year-old mom, ponytail hair, green sweatshirt, calm expression",
+        "panels": [
+          {
+            "prompt": "webtoon comic panel of 32-year-old mom, ponytail hair, green sweatshirt, calm expression: Mother kneeling beside child on grass, gently holding bike handle, smiling, park background, close-up of hands, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 6119
+              }
+            ],
+            "ok": true,
+            "file": "images/d05-1.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 32-year-old mom, ponytail hair, green sweatshirt, calm expression: Mother releases hand, child loses balance, falls onto grass, mom shocked expression, soft sunlight, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 6366
+              }
+            ],
+            "ok": true,
+            "file": "images/d05-2.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 32-year-old mom, ponytail hair, green sweatshirt, calm expression: Mom is applying a Band-Aid on child's forehead, encouraging smile, child nodding, sun low overhead, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7458
+              }
+            ],
+            "ok": true,
+            "file": "images/d05-3.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 32-year-old mom, ponytail hair, green sweatshirt, calm expression: Child pedaling alone, mother cheering from sidelines, evening with golden sunset, child smiling triumphant, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 6785
+              }
+            ],
+            "ok": true,
+            "file": "images/d05-4.jpg"
+          }
+        ]
+      },
+      "totalMs": 210128,
+      "c4_under5min": true
+    },
+    {
+      "id": "d06",
+      "hard": false,
+      "drawImages": true,
+      "events": [
+        "친구와 등산",
+        "중턱에서 포기하고 싶어 함",
+        "친구가 초콜릿을 주며 격려",
+        "정상에서 노을을 봄"
+      ],
+      "features": [
+        "빨간 모자",
+        "주황색 바람막이"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 17889
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"북한산에서 초콜릿과 노을\",\"character\":\"20대 남성, 빨간 등산 모자, 주황색 바람막이, 끊임없는 웃음\",\"panels\":[{\"scene\":\"Young man climbing 북한산, confident stride, sun rising, forest path, camera at his side\",\"caption\":\"친구와 함께 북한산을 올라갔어요.\",\"dialogue\":\"오늘도 기분이 좋다!\"},{\"scene\":\"Midway, he grimaces, clutching his leg, leans on a tree, friend reassuring, wide view of trail\",\"caption\":\"중턱에서 다리가 아파 내려가자고 했죠.\",\"dialogue\":\"이거 참 아프다!\"},{\"scene\":\"Friend pulls out a chocolate from bag, offers to him, he smiles, chocolate in hand, bright hillside\",\"caption\":\"친구가 초콜릿을 꺼내며 더 가자고 했어요.\",\"dialogue\":\"다행히 초콜릿이 있네!\"},{\"scene\":\"At summit, panoramic sunset, them standing together, arms around each other, breathtaking view, sunrise glow\",\"caption\":\"정상에서 예쁜 노을을 보며 올라오길 좋았어요.\",\"dialogue\":\"아름다워!\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "북한산에서 초콜릿과 노을",
+        "character": "20대 남성, 빨간 등산 모자, 주황색 바람막이, 끊임없는 웃음",
+        "panels": [
+          {
+            "scene": "Young man climbing 북한산, confident stride, sun rising, forest path, camera at his side",
+            "caption": "친구와 함께 북한산을 올라갔어요.",
+            "dialogue": "오늘도 기분이 좋다!"
+          },
+          {
+            "scene": "Midway, he grimaces, clutching his leg, leans on a tree, friend reassuring, wide view of trail",
+            "caption": "중턱에서 다리가 아파 내려가자고 했죠.",
+            "dialogue": "이거 참 아프다!"
+          },
+          {
+            "scene": "Friend pulls out a chocolate from bag, offers to him, he smiles, chocolate in hand, bright hillside",
+            "caption": "친구가 초콜릿을 꺼내며 더 가자고 했어요.",
+            "dialogue": "다행히 초콜릿이 있네!"
+          },
+          {
+            "scene": "At summit, panoramic sunset, them standing together, arms around each other, breathtaking view, sunrise glow",
+            "caption": "정상에서 예쁜 노을을 보며 올라오길 좋았어요.",
+            "dialogue": "아름다워!"
+          }
+        ]
+      },
+      "splitMs": 17902,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 3,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      },
+      "translate": {
+        "needed": true,
+        "ok": false,
+        "attempts": 2
+      },
+      "image": {
+        "skipped": "번역 실패",
+        "panels": []
+      },
+      "c4_under5min": false
+    },
+    {
+      "id": "d07",
+      "hard": false,
+      "drawImages": false,
+      "events": [
+        "엄마 생신 케이크를 구움",
+        "시트가 탐",
+        "빵집 시트로 다시 꾸밈",
+        "엄마가 기뻐함"
+      ],
+      "features": [
+        "양갈래 머리",
+        "분홍색 앞치마"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 15497
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"생크림 케이크\",\"character\":\"10대 여자 양갈래 머리, 분홍 앞치마\",\"panels\":[{\"scene\":\"young teen baker holding a tray of batter, excited smile, kitchen background, oven door open, she looks eager\",\"caption\":\"엄마 생신, 내가 케이크를 만들었어!\",\"dialogue\":\"와, 오늘은 꼭 잘 만들자!\"},{\"scene\":\"teenager turns on oven, alarm blares, she frowns as the baking sheet turns black, smoke rises\",\"caption\":\"오븐 온도 두고 빵이 새까맣게 타 버렸다\",\"dialogue\":\"아니!! 좀 너무 뜨거웠어!\"},{\"scene\":\"teenager hurrying through a bakery, buying a new sheet, back to kitchen, adding whipped cream and strawberries\",\"caption\":\"빵집에서 새 시트를 사 와서 꾸몄어\",\"dialogue\":\"이제 이렇게 마무리!\"},{\"scene\":\"mom smiles at the colorful cake, takes a bite, delighted expression, mom and teen share the moment\",\"caption\":\"엄마가 ‘세상에서 제일 맛있다’며 웃으셨다\",\"dialogue\":\"감사합니다!\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "생크림 케이크",
+        "character": "10대 여자 양갈래 머리, 분홍 앞치마",
+        "panels": [
+          {
+            "scene": "young teen baker holding a tray of batter, excited smile, kitchen background, oven door open, she looks eager",
+            "caption": "엄마 생신, 내가 케이크를 만들었어!",
+            "dialogue": "와, 오늘은 꼭 잘 만들자!"
+          },
+          {
+            "scene": "teenager turns on oven, alarm blares, she frowns as the baking sheet turns black, smoke rises",
+            "caption": "오븐 온도 두고 빵이 새까맣게 타 버렸다",
+            "dialogue": "아니!! 좀 너무 뜨거웠어!"
+          },
+          {
+            "scene": "teenager hurrying through a bakery, buying a new sheet, back to kitchen, adding whipped cream and strawberries",
+            "caption": "빵집에서 새 시트를 사 와서 꾸몄어",
+            "dialogue": "이제 이렇게 마무리!"
+          },
+          {
+            "scene": "mom smiles at the colorful cake, takes a bite, delighted expression, mom and teen share the moment",
+            "caption": "엄마가 ‘세상에서 제일 맛있다’며 웃으셨다",
+            "dialogue": "감사합니다!"
+          }
+        ]
+      },
+      "splitMs": 15505,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      }
+    },
+    {
+      "id": "d08",
+      "hard": true,
+      "drawImages": false,
+      "events": [
+        "피곤함",
+        "저녁에 라면을 먹음"
+      ],
+      "features": [],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 15856
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"라면 한 끼\",\"character\":\"중년 남성, 긴 머리, 노트북 가방, 수고스러운 얼굴\",\"panels\":[{\"scene\":\"middle-aged man yawning, sitting in bedroom, blinds open, light P.O.V.\",\"caption\":\"오늘도 아침에 힘겨웠다.\",\"dialogue\":\"\"}, {\"scene\":\"man stirring ramen broth on stove, steam rising, lamp glowing, kitchen background\",\"caption\":\"저녁을 준비하며 잠시 힐링한다.\",\"dialogue\":\"\"}, {\"scene\":\"man tasting ramen, mouthwatering expression, close-up, spoon in hand\",\"caption\":\"뜨거운 라면이 입을 감싸요.\",\"dialogue\":\"진짜 맛있다!\"}, {\"scene\":\"man resting on couch, satisfied smile, empty bowl, sunset outside window\",\"caption\":\"오늘 하루, 라면 한 그릇으로 끝이야.\",\"dialogue\":\"\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "라면 한 끼",
+        "character": "중년 남성, 긴 머리, 노트북 가방, 수고스러운 얼굴",
+        "panels": [
+          {
+            "scene": "middle-aged man yawning, sitting in bedroom, blinds open, light P.O.V.",
+            "caption": "오늘도 아침에 힘겨웠다.",
+            "dialogue": ""
+          },
+          {
+            "scene": "man stirring ramen broth on stove, steam rising, lamp glowing, kitchen background",
+            "caption": "저녁을 준비하며 잠시 힐링한다.",
+            "dialogue": ""
+          },
+          {
+            "scene": "man tasting ramen, mouthwatering expression, close-up, spoon in hand",
+            "caption": "뜨거운 라면이 입을 감싸요.",
+            "dialogue": "진짜 맛있다!"
+          },
+          {
+            "scene": "man resting on couch, satisfied smile, empty bowl, sunset outside window",
+            "caption": "오늘 하루, 라면 한 그릇으로 끝이야.",
+            "dialogue": ""
+          }
+        ]
+      },
+      "splitMs": 15864,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      }
+    },
+    {
+      "id": "d09",
+      "hard": true,
+      "drawImages": true,
+      "events": [
+        "점심에 친구와 말다툼",
+        "오후 내내 마음이 불편함",
+        "저녁에 사과 문자를 보냄",
+        "친구 전화로 화해"
+      ],
+      "features": [
+        "갈색 단발머리",
+        "하얀 블라우스"
+      ],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 200,
+                "ms": 21747
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"사과의 사과\",\"character\":\"20대 여자 갈색 단발머리, 하얀 블라우스, 웃는 눈\",\"panels\":[{\"scene\":\"midday, young woman in office, frowning, fists on desk, briefcase open, coworkers glance\",\"caption\":\"점심에 사소한 다툼이 시작됐다\",\"dialogue\":\"\\\"그게 옳지 않지\\\"\"},{\"scene\":\"afternoon office, woman slumps at desk, computer inactive, eyes closed, gloomy\",\"caption\":\"오후에는 기분이 안 좋아서 일이 멈췄다\",\"dialogue\":\"\"},{\"scene\":\"evening, woman texting on phone, hopeful smile, room dim, bedside lamp glows\",\"caption\":\"저녁에 사과 문자를 보냈다\",\"dialogue\":\"미안해요!\"},{\"scene\":\"night, woman in bedroom, phone rings, she smiles, headset on, receiver bright\",\"caption\":\"친구가 전화를 걸어 와서 화해했다\",\"dialogue\":\"다행이야, 재밌게~\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "사과의 사과",
+        "character": "20대 여자 갈색 단발머리, 하얀 블라우스, 웃는 눈",
+        "panels": [
+          {
+            "scene": "midday, young woman in office, frowning, fists on desk, briefcase open, coworkers glance",
+            "caption": "점심에 사소한 다툼이 시작됐다",
+            "dialogue": "\"그게 옳지 않지\""
+          },
+          {
+            "scene": "afternoon office, woman slumps at desk, computer inactive, eyes closed, gloomy",
+            "caption": "오후에는 기분이 안 좋아서 일이 멈췄다",
+            "dialogue": ""
+          },
+          {
+            "scene": "evening, woman texting on phone, hopeful smile, room dim, bedside lamp glows",
+            "caption": "저녁에 사과 문자를 보냈다",
+            "dialogue": "미안해요!"
+          },
+          {
+            "scene": "night, woman in bedroom, phone rings, she smiles, headset on, receiver bright",
+            "caption": "친구가 전화를 걸어 와서 화해했다",
+            "dialogue": "다행이야, 재밌게~"
+          }
+        ]
+      },
+      "splitMs": 21754,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      },
+      "translate": {
+        "needed": true,
+        "ok": true,
+        "attempts": 1
+      },
+      "image": {
+        "seed": 688318,
+        "character": "20s woman with brown bob hair, white blouse, smiling face",
+        "panels": [
+          {
+            "prompt": "webtoon comic panel of 20s woman with brown bob hair, white blouse, smiling face: midday, young woman in office, frowning, fists on desk, briefcase open, coworkers glance, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7595
+              }
+            ],
+            "ok": true,
+            "file": "images/d09-1.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 20s woman with brown bob hair, white blouse, smiling face: afternoon office, woman slumps at desk, computer inactive, eyes closed, gloomy, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7666
+              }
+            ],
+            "ok": true,
+            "file": "images/d09-2.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 20s woman with brown bob hair, white blouse, smiling face: evening, woman texting on phone, hopeful smile, room dim, bedside lamp glows, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7348
+              }
+            ],
+            "ok": true,
+            "file": "images/d09-3.jpg"
+          },
+          {
+            "prompt": "webtoon comic panel of 20s woman with brown bob hair, white blouse, smiling face: night, woman in bedroom, phone rings, she smiles, headset on, receiver bright, korean webtoon style, cute cartoon, clean line art, flat pastel colors",
+            "tries": [
+              {
+                "status": 200,
+                "ms": 7679
+              }
+            ],
+            "ok": true,
+            "file": "images/d09-4.jpg"
+          }
+        ]
+      },
+      "totalMs": 201124,
+      "c4_under5min": true
+    },
+    {
+      "id": "d10",
+      "hard": true,
+      "drawImages": false,
+      "events": [
+        "비 오는 날 쓸쓸함",
+        "사진첩을 봄",
+        "할머니 생각이 남",
+        "김치전을 부쳐 먹고 나아짐"
+      ],
+      "features": [],
+      "split": {
+        "attempts": 1,
+        "calls": [
+          {
+            "ok": true,
+            "tries": [
+              {
+                "status": 503,
+                "ms": 396
+              },
+              {
+                "status": 402,
+                "ms": 500
+              },
+              {
+                "status": 200,
+                "ms": 15349
+              }
+            ]
+          }
+        ],
+        "raws": [
+          "{\"title\":\"비 속의 김치전\",\"character\":\"20대 남성, 짧은 갈색 머리, 티셔츠, 반바지, 눈이 반짝임\",\"panels\":[{\"scene\":\"young male sitting on couch, glass of water, somber expression, rainy window in background, close-up of face\",\"caption\":\"하루 종일 허전했다.\",\"dialogue\":\"맞아, 오늘은 비가와서 더욱 쓸쓸해.\"},{\"scene\":\"male turning the page of a dusty photo album in a dim kitchen, close-up of old family photos, his face lit by soft light\",\"caption\":\"오래된 사진첩을 넘겼다.\"},{\"scene\":\"male staring at a faded photo of an elderly woman cooking, tears on his cheek, kitchen flickering.\",\"caption\":\"할머니가 해주던 김치전이 그리워.\"},{\"scene\":\"young male flipping a golden kimchi pancake on a hot pan, smiling, steam rising, kitchen cozy\",\"caption\":\"김치전을 부쳐 먹고 마음이 나아졌다.\"}]}"
+        ]
+      },
+      "c1_formatOk": true,
+      "formatOkAfterRetry": true,
+      "comic": {
+        "title": "비 속의 김치전",
+        "character": "20대 남성, 짧은 갈색 머리, 티셔츠, 반바지, 눈이 반짝임",
+        "panels": [
+          {
+            "scene": "young male sitting on couch, glass of water, somber expression, rainy window in background, close-up of face",
+            "caption": "하루 종일 허전했다.",
+            "dialogue": "맞아, 오늘은 비가와서 더욱 쓸쓸해."
+          },
+          {
+            "scene": "male turning the page of a dusty photo album in a dim kitchen, close-up of old family photos, his face lit by soft light",
+            "caption": "오래된 사진첩을 넘겼다.",
+            "dialogue": ""
+          },
+          {
+            "scene": "male staring at a faded photo of an elderly woman cooking, tears on his cheek, kitchen flickering.",
+            "caption": "할머니가 해주던 김치전이 그리워.",
+            "dialogue": ""
+          },
+          {
+            "scene": "young male flipping a golden kimchi pancake on a hot pan, smiling, steam rising, kitchen cozy",
+            "caption": "김치전을 부쳐 먹고 마음이 나아졌다.",
+            "dialogue": ""
+          }
+        ]
+      },
+      "splitMs": 68872,
+      "lang": {
+        "characterEnglish": false,
+        "scenesEnglish": 4,
+        "captionsKorean": 4,
+        "dialoguesKoreanOrEmpty": 4
+      }
+    }
+  ],
+  "finishedAt": "2026-11-17T03:25:45.446Z"
+}
