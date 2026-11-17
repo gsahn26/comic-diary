@@ -7,6 +7,7 @@
 import {
   hasHangul, splitWith, translateWith, imageUrlFor, TEXT_API,
 } from './core.js';
+import { checkHero } from './hero-check.js';
 
 (() => {
 
@@ -43,7 +44,7 @@ import {
     stepEdit: $('step-edit'), stepResult: $('step-result'),
     title: $('title'), character: $('character'), panelEditors: $('panelEditors'),
     btnDraw: $('btnDraw'), btnBack: $('btnBack'),
-    drawStatus: $('drawStatus'), canvas: $('comic'), panelControls: $('panelControls'),
+    drawStatus: $('drawStatus'), heroStatus: $('heroStatus'), canvas: $('comic'), panelControls: $('panelControls'),
     btnDownload: $('btnDownload'), btnSave: $('btnSave'), btnNew: $('btnNew'),
     galleryGrid: $('galleryGrid'), galleryCount: $('galleryCount'),
     viewer: $('viewer'), viewerImg: $('viewerImg'), viewerDownload: $('viewerDownload'),
@@ -247,11 +248,38 @@ import {
     el.btnDownload.disabled = !all;
     el.btnSave.disabled = !all;
     el.btnDraw.disabled = false;
-    if (all) updateDrawStatus('완성! PNG로 내려받거나 갤러리에 저장하세요. 마음에 안 드는 컷은 다시 그릴 수 있어요.', false, 'ok');
+    if (all) {
+      updateDrawStatus('완성! PNG로 내려받거나 갤러리에 저장하세요. 마음에 안 드는 컷은 다시 그릴 수 있어요.', false, 'ok');
+      runHeroCheck(state.job);
+    }
     else if (failed && !el.drawStatus.classList.contains('err')) updateDrawStatus('일부 컷을 그리지 못했어요. 해당 컷의 “다시 그리기”를 눌러 주세요.', false, 'err');
   }
 
   function updateDrawStatus(text, spin = false, kind = '') { setStatus(el.drawStatus, text, kind, spin); }
+
+  // ---------- 주인공 검사 (YOLO, 브라우저 안에서 실행) ----------
+  // 4컷이 다 그려지면 컷마다 사람을 찾고, 머리·옷 색이 다른 컷을 ⚠️로 알려 준다.
+  async function runHeroCheck(job) {
+    const status = (t, kind = '', spin = false) => setStatus(el.heroStatus, t, kind, spin);
+    el.heroStatus.classList.remove('hidden');
+    try {
+      const r = await checkHero(state.panels.map((p) => p.img), (m) => job === state.job && status(m, '', true));
+      if (job !== state.job) return;
+      r.panels.forEach((c, i) => {
+        const p = state.panels[i];
+        p.hero = c;
+        p.msg = c.verdict === 'ok' ? '완성 · 👤 주인공 OK'
+          : c.verdict === 'none' ? '완성 · ⚠️ 주인공이 안 보여요'
+            : `완성 · ⚠️ 다른 사람 같아요 (비슷함 ${Math.round(c.same * 100)}%)`;
+      });
+      renderControls();
+      status(r.summary, r.ok ? 'ok' : 'err');
+    } catch (e) {
+      if (job !== state.job) return;
+      console.warn('주인공 검사 실패', e);
+      status('주인공 검사를 하지 못했어요(모델을 불러오지 못함). 만화는 그대로 쓸 수 있어요.', 'err');
+    }
+  }
 
   // ---------- 캔버스 그리기 ----------
   const FONT_TITLE = '700 64px Gaegu';
@@ -468,7 +496,8 @@ import {
     state.panels.forEach((p, i) => {
       const s = el.panelControls.children[i].querySelector('.state');
       s.textContent = p.msg || '';
-      s.className = 'state' + (p.status === 'done' ? ' ok' : p.status === 'error' ? ' err' : '');
+      const warn = p.status === 'done' && p.hero && p.hero.verdict !== 'ok';
+      s.className = 'state' + (warn ? ' err' : p.status === 'done' ? ' ok' : p.status === 'error' ? ' err' : '');
       el.panelControls.children[i].querySelector('[data-regen]').disabled =
         p.status === 'waiting' || p.status === 'loading';
     });
@@ -488,6 +517,7 @@ import {
     el.btnDraw.disabled = true;
     el.btnDownload.disabled = true;
     el.btnSave.disabled = true;
+    el.heroStatus.classList.add('hidden');
     el.panelControls.innerHTML = '';
     el.stepResult.classList.remove('hidden');
     el.stepResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -512,6 +542,7 @@ import {
     state.panels.forEach((p) => {
       p.seed = state.seed; // 같은 seed → 캐릭터 일관성 ↑
       p.img = null;
+      p.hero = null;
       p.status = 'idle';
       p.msg = '';
     });
@@ -642,6 +673,8 @@ import {
     const p = state.panels[i];
     p.seed = randSeed();
     p.img = null;
+    p.hero = null;
+    el.heroStatus.classList.add('hidden');
     el.btnDownload.disabled = true;
     el.btnSave.disabled = true;
     enqueue(i);
