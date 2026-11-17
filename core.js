@@ -57,7 +57,10 @@ Respond with ONLY a JSON object, no markdown, in exactly this shape:
  "panels":[{"scene":"English image prompt for this panel: what the main character is doing, facial expression, setting, other characters, camera framing. Do not mention text or speech bubbles. Under 20 words.",
             "caption":"한국어 내레이션 (25자 이내)",
             "dialogue":"주인공의 짧은 한국어 대사 (20자 이내, 없으면 빈 문자열)"}]}
-The panels array must have exactly 4 items in story order. Keep it funny and warm.
+The panels array must have exactly 4 items. Keep it funny and warm.
+ORDER RULE: panels follow the order in which things actually HAPPENED (chronological), even when the diary tells them out of order.
+CONTENT RULE: use only the people and events written in the diary. Do not invent new people or big events. Give each key event its own panel; do not squeeze two events into one panel. If the diary is very short, split its few events into 4 small moments.
+FORMAT RULE: the reply must be valid JSON. Every panel object has exactly three string keys: "scene", "caption", "dialogue".
 LANGUAGE RULE: "character" and "scene" are ENGLISH ONLY (they go to an English image model). "title", "caption", "dialogue" are KOREAN.
 Example scene: "young woman running toward a bus stop in the morning, panicked face, bus leaving in the background, full body shot".`;
 
@@ -76,11 +79,36 @@ export function parseTranslation(raw, n) {
   return items && items.length === n && !items.some(hasHangul) ? items : null;
 }
 
+// 주인공(특히 옷 색)을 맨 앞에 둔다. 뒤쪽에 두면 옷 색이 지켜지지 않았다(PoC 1차 측정 d01).
 export function buildImagePrompt(scene, character) {
-  return [`${STYLE_PREFIX}: ${clipWords(scene, 28)}`, clipWords(character, 16), STYLE_SUFFIX]
-    .filter(Boolean).join(', ');
+  const who = clipWords(character, 12);
+  return [`${STYLE_PREFIX}${who ? ` of ${who}` : ''}: ${clipWords(scene, 26)}`, STYLE_SUFFIX].join(', ');
 }
 
 export function imageUrlFor(scene, character, seed) {
   return `${IMAGE_API}${encodeURIComponent(buildImagePrompt(scene, character))}?width=${IMG_SIZE}&height=${IMG_SIZE}&seed=${seed}`;
+}
+
+/** 4컷 나누기. 형식이 깨지면 한 번 더 요청한다. ask(system, user)는 응답 문자열을 돌려주는 함수. */
+export async function splitWith(ask, diary, hero, maxAttempts = 2) {
+  const raws = [];
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const raw = await ask(SPLIT_SYSTEM, splitUserMessage(diary, hero));
+    raws.push(raw);
+    const comic = normalizeComic(parseLooseJSON(raw));
+    if (comic) return { comic, attempts: attempt, raws };
+  }
+  return { comic: null, attempts: maxAttempts, raws };
+}
+
+/** 한국어가 섞인 주인공 묘사·장면을 영어로 번역. 실패하면 한 번 더. ok=false면 원문 그대로. */
+export async function translateWith(ask, character, scenes, maxAttempts = 2) {
+  const texts = [character, ...scenes];
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const items = parseTranslation(await ask(TRANSLATE_SYSTEM, JSON.stringify({ items: texts })), texts.length);
+      if (items) return { ok: true, attempts: attempt, character: items[0], scenes: items.slice(1) };
+    } catch { /* 다시 시도 */ }
+  }
+  return { ok: false, attempts: maxAttempts, character, scenes };
 }

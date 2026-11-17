@@ -5,8 +5,7 @@
  * 무료 이미지는 "IP당 45초에 1장" 제한이 있어 이미지를 한 장씩 순서대로 요청한다.
  */
 import {
-  hasHangul, parseLooseJSON, normalizeComic, SPLIT_SYSTEM, splitUserMessage,
-  TRANSLATE_SYSTEM, parseTranslation, imageUrlFor, TEXT_API,
+  hasHangul, splitWith, translateWith, imageUrlFor, TEXT_API,
 } from './core.js';
 
 (() => {
@@ -125,24 +124,15 @@ import {
     throw lastErr;
   }
 
+  // 형식이 깨지면 한 번 더 요청한다(45초쯤 더 걸림).
   async function splitDiary(diary, hero, onWait) {
-    const user = splitUserMessage(diary, hero);
-    const raw = await askText(SPLIT_SYSTEM, user, { onWait });
-    return normalizeComic(parseLooseJSON(raw));
+    const { comic } = await splitWith((sys, user) => askText(sys, user, { onWait }), diary, hero);
+    return comic;
   }
 
-  /** 한국어가 섞인 주인공 묘사/장면을 영어 프롬프트로 번역 (실패하면 원문 사용). */
-  async function translatePrompts(character, scenes, onWait) {
-    const texts = [character, ...scenes];
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const raw = await askText(TRANSLATE_SYSTEM, JSON.stringify({ items: texts }), { onWait });
-        const items = parseTranslation(raw, texts.length);
-        if (items) return { character: items[0], scenes: items.slice(1) };
-      } catch { /* 다시 시도 */ }
-    }
-    return { character, scenes };
-  }
+  /** 한국어가 섞인 주인공 묘사/장면을 영어 프롬프트로 번역. ok=false면 번역 실패. */
+  const translatePrompts = (character, scenes, onWait) =>
+    translateWith((sys, user) => askText(sys, user, { onWait }), character, scenes);
 
   // ---------- 이미지 ----------
   const imageUrl = (p) => imageUrlFor(p.scene, state.character, p.seed);
@@ -509,6 +499,12 @@ import {
       const t = await translatePrompts(state.character, state.panels.map((p) => p.scene),
         (sec) => updateDrawStatus(sec > 0 ? `장면 설명을 영어로 바꾸려고 기다리는 중… (무료 서버 제한 ${sec}초)` : '장면 설명을 영어로 바꾸는 중…', true));
       if (job !== state.job) return;
+      if (!t.ok) {
+        // 한국어 묘사 그대로 그리면 컷마다 다른 사람이 나온다(PoC 1차 측정 d03) → 그리지 않고 멈춘다.
+        updateDrawStatus('장면 설명을 영어로 바꾸지 못했어요. “그림 그리기”를 다시 눌러 주세요.', false, 'err');
+        el.btnDraw.disabled = false;
+        return;
+      }
       state.character = t.character;
       t.scenes.forEach((s, i) => { state.panels[i].scene = s; });
     }
