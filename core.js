@@ -6,7 +6,7 @@ export const IMAGE_API = 'https://image.pollinations.ai/prompt/';
 export const IMG_SIZE = 768;
 export const GAP_MS = 46_000; // 무료 제한: 텍스트·이미지 각각 IP당 45초에 1회
 
-// 무료 이미지 모델은 프롬프트 앞부분(약 77토큰)만 읽는다 → 짧게, 중요한 것(장면)부터.
+// 프롬프트가 길면 뒤쪽 내용이 그림에 반영되지 않았다(정확한 한도는 확인 못 함) → 짧게, 중요한 것부터.
 export const STYLE_PREFIX = 'webtoon comic panel';
 export const STYLE_SUFFIX = 'korean webtoon style, cute cartoon, clean line art, flat pastel colors';
 
