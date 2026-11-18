@@ -2,7 +2,8 @@
 
 오늘 있었던 일을 일기로 쓰면, AI가 **기승전결 4컷 웹툰**으로 바꿔 주는 무료 웹앱입니다.
 
-- 🔗 **배포 링크:** https://gsahn26.github.io/comic-diary/
+- 🔗 **배포 링크:** https://4cut-diary.vercel.app (Vercel)
+- 🔗 **예비 링크:** https://gsahn26.github.io/comic-diary/ (GitHub Pages)
 - 📦 **저장소:** https://github.com/gsahn26/comic-diary
 - 💸 **비용:** 0원 (API 키 없음, 서버 없음)
 
@@ -27,7 +28,7 @@
 | 네컷 합성 | `<canvas>`에 2×2로 배치하고, **한글 말풍선·해설은 앱이 직접 그림** (이미지 AI는 한글을 잘 못 쓰기 때문) |
 | 글꼴 | Google Fonts – Gaegu(말풍선·제목), Noto Sans KR(해설) |
 | 저장 | `localStorage` 갤러리 (최대 20개, 공간이 부족하면 오래된 것부터 정리) |
-| 배포 | GitHub Pages |
+| 배포 | Vercel, GitHub Pages |
 
 ## 알아 둘 점 (한계)
 
@@ -42,7 +43,7 @@
 | --- | --- | --- |
 | 1. AI 개선 지점을 찾아 정의 | [문제 정의서](docs/01-problem-definition.md) — 주일학교 그림일기, 대상 사용자, 가설, 성공 기준 | 작성함. 반 인원 등 일부 칸은 직접 채워야 함 |
 | 2. 문제에 맞는 모델 선정 | [모델·기법 선정과 이유](docs/02-model-selection.md) | 작성함 |
-| 3. PoC 완성 | [배포된 앱](https://gsahn26.github.io/comic-diary/), [core.js](core.js), [app.js](app.js) | 동작함. 실제 아이 일기로는 아직 시험하지 않음 |
+| 3. PoC 완성 | [배포된 앱](https://4cut-diary.vercel.app), [core.js](core.js), [app.js](app.js) | 동작함. 실제 아이 일기로는 아직 시험하지 않음 |
 | 4. 개선 효과 검증 | [기존 방식과 비교](docs/03-baseline-comparison.md), [PoC 보고서](poc/REPORT.md) | 정성 비교와 재현 가능한 측정. 기존 방식의 시간은 아직 재지 않음 |
 | 5. 한계와 새로운 시도 | [PoC 보고서](poc/REPORT.md)의 한계·다음 단계 | 데모 배포, 번역 단계 추가, 고쳐서 다시 잰 2차 측정 |
 
