@@ -760,7 +760,9 @@ import { toast, ask } from './ui.js';
     }, 'image/png');
   }
 
-  function loadGallery() { return lsGet(LS_GALLERY, []); }
+  // 내 갤러리는 계정마다 따로 (같은 컴퓨터를 여러 사람이 써도 섞이지 않게)
+  const galleryKey = () => (community.user ? `${LS_GALLERY}.${community.user.id}` : LS_GALLERY);
+  function loadGallery() { return lsGet(galleryKey(), []); }
 
   function saveToGallery() {
     const item = {
@@ -771,7 +773,7 @@ import { toast, ask } from './ui.js';
     };
     const list = [item, ...loadGallery()].slice(0, GALLERY_MAX);
     while (list.length) {
-      if (lsSet(LS_GALLERY, list)) {
+      if (lsSet(galleryKey(), list)) {
         el.btnSave.disabled = true;
         updateDrawStatus(`갤러리에 저장했어요 (${list.length}개).`, false, 'ok');
         renderGallery();
@@ -893,14 +895,30 @@ import { toast, ask } from './ui.js';
   el.btnDownload.addEventListener('click', download);
   el.btnSave.addEventListener('click', saveToGallery);
   el.btnShare.addEventListener('click', () => community.openShare(el.canvas, state.title));
-  el.btnNew.addEventListener('click', () => {
+  /** 쓰던 일기·4컷·완성 그림을 모두 비운다 (새 일기, 로그아웃, 다른 계정 로그인 때) */
+  function resetWriting() {
     state.job++;
     state.queue = [];
     state.running = false;
+    state.title = '';
+    state.character = '';
+    state.panels = [];
     el.stepEdit.classList.add('hidden');
     el.stepResult.classList.add('hidden');
     el.diary.value = '';
+    el.hero.value = '';
+    el.title.value = '';
+    el.character.value = '';
+    el.panelEditors.innerHTML = '';
+    el.panelControls.innerHTML = '';
+    el.heroStatus.classList.add('hidden');
     setStatus(el.splitStatus, '');
+    setStatus(el.drawStatus, '');
+    ctx.clearRect(0, 0, W, H);
+    bubbleRects.length = 0;
+  }
+  el.btnNew.addEventListener('click', () => {
+    resetWriting();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     el.diary.focus();
   });
@@ -912,7 +930,7 @@ import { toast, ask } from './ui.js';
     el.viewer.close();
     const ok = await ask({ icon: '🗑', title: '내 갤러리에서 지울까요?', message: `“${viewing.title}” — 이 브라우저에서 지워져요.`, ok: '지우기', danger: true });
     if (!ok) return;
-    lsSet(LS_GALLERY, loadGallery().filter((it) => it.id !== viewing.id));
+    lsSet(galleryKey(), loadGallery().filter((it) => it.id !== viewing.id));
     el.viewer.close();
     renderGallery();
   });
@@ -925,7 +943,20 @@ import { toast, ask } from './ui.js';
   if (draft) { el.diary.value = draft.diary || ''; el.hero.value = draft.hero || ''; }
   const showLoginNote = (u) => el.loginNote.classList.toggle('hidden', !community.enabled || Boolean(u));
   el.btnShare.classList.toggle('hidden', !community.enabled); // 서버 설정 전엔 공유 버튼 숨김
-  community.onAuth(showLoginNote);
+  let lastUid; // undefined = 아직 첫 확인 전
+  community.onAuth((u) => {
+    showLoginNote(u);
+    const uid = u?.id || null;
+    // 첫 로그인 확인 때 예전(계정 구분 없던) 갤러리를 이 계정으로 옮긴다
+    if (uid && !lsGet(`${LS_GALLERY}.${uid}`, null) && lsGet(LS_GALLERY, null)) {
+      lsSet(`${LS_GALLERY}.${uid}`, lsGet(LS_GALLERY, []));
+      try { localStorage.removeItem(LS_GALLERY); } catch { /* 무시 */ }
+    }
+    // 로그아웃하거나 다른 계정으로 바뀌면 쓰던 내용을 비운다
+    if (lastUid !== undefined && uid !== lastUid) resetWriting();
+    lastUid = uid;
+    renderGallery();
+  });
   showLoginNote(null);
   community.init();
   const startView = location.hash === '#community' ? 'community' : 'write';

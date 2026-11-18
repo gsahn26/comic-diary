@@ -94,6 +94,7 @@ async function login() {
 
 async function logout() {
   if (!sb) return;
+  try { sessionStorage.removeItem(SS_DRAFT); } catch { /* 무시 */ }
   await sb.auth.signOut();
 }
 
@@ -125,7 +126,7 @@ function requireLogin(draft) {
       {
         label: '구글로 로그인', kind: 'google wide',
         onclick: (close) => {
-          try { if (draft) sessionStorage.setItem(SS_DRAFT, JSON.stringify(draft)); } catch { /* 무시 */ }
+          try { if (draft) sessionStorage.setItem(SS_DRAFT, JSON.stringify({ ...draft, at: Date.now() })); } catch { /* 무시 */ }
           close(true);
           login();
         },
@@ -136,11 +137,14 @@ function requireLogin(draft) {
   return false;
 }
 
+/** 로그인하러 갔다가 막 돌아왔을 때만(주소에 ?code=, 10분 안) 쓰던 일기를 돌려준다. */
 function takeDraft() {
   try {
     const v = sessionStorage.getItem(SS_DRAFT);
     sessionStorage.removeItem(SS_DRAFT);
-    return v ? JSON.parse(v) : null;
+    if (!v || !location.search.includes('code=')) return null;
+    const d = JSON.parse(v);
+    return d && Date.now() - (d.at || 0) < 10 * 60_000 ? d : null;
   } catch { return null; }
 }
 
@@ -150,7 +154,7 @@ function openShare(canvas, title) {
   if (!requireLogin()) return;
   const dlg = $('shareDialog');
   $('shareTitle').value = (title || '오늘의 일기').slice(0, 30);
-  try { $('shareNick').value = localStorage.getItem(LS_NICK) || ''; } catch { /* 무시 */ }
+  try { $('shareNick').value = localStorage.getItem(`${LS_NICK}.${user?.id}`) || ''; } catch { /* 무시 */ }
   $('sharePublic').checked = true;
   $('shareStatus').textContent = '';
   $('shareStatus').className = 'status';
@@ -172,7 +176,7 @@ async function submitShare(canvas) {
 
   $('shareSubmit').disabled = true;
   say('올리는 중…');
-  try { localStorage.setItem(LS_NICK, nickname); } catch { /* 무시 */ }
+  try { localStorage.setItem(`${LS_NICK}.${user.id}`, nickname); } catch { /* 무시 */ }
 
   const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
   if (!blob) { $('shareSubmit').disabled = false; return say('그림을 만들지 못했어요.', 'err'); }

@@ -38,11 +38,11 @@
       <p id="loginNote" class="login-note hidden">🔐 네컷일기를 만들려면 <b>구글 로그인</b>이 필요해요. 일기를 먼저 써 두고 버튼을 눌러도 돼요.</p>
       <label class="field">
         <span>일기</span>
-        <textarea id="diary" rows="7" maxlength="1500" placeholder="예) 아침에 늦잠을 자서 버스를 놓쳤다. 뛰어가다 넘어졌는데 친구가 웃으면서 도와줬다. 점심엔 둘이서 떡볶이를 먹었고, 저녁엔 고양이랑 낮잠을 잤다."></textarea>
+        <textarea id="diary" rows="7" autocomplete="off" maxlength="1500" placeholder="예) 아침에 늦잠을 자서 버스를 놓쳤다. 뛰어가다 넘어졌는데 친구가 웃으면서 도와줬다. 점심엔 둘이서 떡볶이를 먹었고, 저녁엔 고양이랑 낮잠을 잤다."></textarea>
       </label>
       <label class="field">
         <span>주인공 생김새 <small>(선택 · 4컷 내내 같은 모습으로 그려요)</small></span>
-        <input id="hero" type="text" maxlength="120" placeholder="예) 단발머리, 동그란 안경, 노란 후드티를 입은 20대 여자" />
+        <input id="hero" type="text" autocomplete="off" maxlength="120" placeholder="예) 단발머리, 동그란 안경, 노란 후드티를 입은 20대 여자" />
       </label>
       <div class="row">
         <button id="btnSplit" class="primary">✨ AI로 4컷 나누기</button>
@@ -56,11 +56,11 @@
       <h2><span class="num">2</span> 4컷 다듬기</h2>
       <label class="field">
         <span>만화 제목</span>
-        <input id="title" type="text" maxlength="30" />
+        <input id="title" type="text" autocomplete="off" maxlength="30" />
       </label>
       <label class="field">
         <span>주인공 묘사 <small>(매 컷 그림에 똑같이 들어가요)</small></span>
-        <input id="character" type="text" maxlength="200" />
+        <input id="character" type="text" autocomplete="off" maxlength="200" />
       </label>
       <div id="panelEditors" class="panel-editors"></div>
       <div class="row">
