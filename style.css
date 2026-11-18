@@ -253,3 +253,8 @@ dialog.sheet { width: min(400px, 92vw); padding: 0; }
   input[type="text"], textarea { font-size: 16px; } /* iOS 자동 확대 막기 */
   .sort-row .tab { flex: 1; justify-content: center; }
 }
+
+/* 말풍선 끌기 */
+canvas.can-drag { cursor: grab; }
+canvas.dragging { cursor: grabbing; }
+.bubble-hint { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }

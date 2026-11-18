@@ -48,7 +48,7 @@ import { toast, ask } from './ui.js';
     btnDraw: $('btnDraw'), btnBack: $('btnBack'),
     drawStatus: $('drawStatus'), heroStatus: $('heroStatus'), canvas: $('comic'), panelControls: $('panelControls'),
     btnDownload: $('btnDownload'), btnSave: $('btnSave'), btnShare: $('btnShare'), btnNew: $('btnNew'),
-    loginNote: $('loginNote'),
+    loginNote: $('loginNote'), btnBubbleAuto: $('btnBubbleAuto'),
     galleryGrid: $('galleryGrid'), galleryCount: $('galleryCount'),
     viewer: $('viewer'), viewerImg: $('viewerImg'), viewerDownload: $('viewerDownload'),
     viewerDelete: $('viewerDelete'), viewerClose: $('viewerClose'),
@@ -277,6 +277,7 @@ import { toast, ask } from './ui.js';
             : `완성 · ⚠️ 다른 사람 같아요 (비슷함 ${Math.round(c.same * 100)}%)`;
       });
       renderControls();
+      await renderComic(); // 사람 위치를 알았으니 말풍선을 사람을 피해 다시 놓는다
       status(r.summary, r.ok ? 'ok' : 'err');
     } catch (e) {
       if (job !== state.job) return;
@@ -342,31 +343,107 @@ import { toast, ask } from './ui.js';
     ctx.drawImage(img, sx, sy, s, s, x, y, size, size);
   }
 
-  function drawBubble(text, px, py, right) {
+  // ---------- 말풍선 ----------
+  // 자리 잡기: YOLO로 찾은 사람 상자(p.hero.boxes)를 피해서 가장 덜 가리는 곳에 둔다.
+  // 사용자가 끌어서 옮기면 p.bubblePos(컷 안 비율 0~1)에 저장하고 그 자리를 쓴다.
+  const BUBBLE_PAD = 14, TAIL = 34;
+  const bubbleRects = []; // 끌기용: 컷마다 마지막으로 그린 말풍선 상자(캔버스 좌표)
+
+  function captionHeight(p) {
+    if (!p.caption) return 0;
+    ctx.font = FONT_CAPTION;
+    return wrapText(p.caption, PANEL - 48, 2).length * 34 + 18;
+  }
+
+  /** 사람 상자를 이 컷의 캔버스 좌표로 바꾼다 (drawCover의 가운데 자르기와 같은 계산). */
+  function peopleInPanel(p, px, py) {
+    const boxes = p.hero?.boxes;
+    if (!boxes?.length || !p.img) return [];
+    const iw = p.img.naturalWidth, ih = p.img.naturalHeight, sq = Math.min(iw, ih);
+    const sx = (iw - sq) / 2, sy = (ih - sq) / 2, k = PANEL / sq;
+    return boxes.map((b) => ({
+      x: px + (b.x * iw - sx) * k, y: py + (b.y * ih - sy) * k, w: b.w * iw * k, h: b.h * ih * k,
+    }));
+  }
+
+  const overlapArea = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x))
+    * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+
+  function layoutBubble(p, i, px, py) {
     ctx.font = FONT_BUBBLE;
-    const lines = wrapText(text, PANEL * 0.62, 3);
+    const lines = wrapText(p.dialogue, PANEL * 0.62, 3);
     const lh = 40;
     const w = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 44;
     const h = lines.length * lh + 26;
-    const bx = right ? px + PANEL - w - 18 : px + 18;
-    const by = py + 18;
-    // 꼬리
-    const tx = bx + (right ? w * 0.3 : w * 0.7);
-    ctx.beginPath();
-    ctx.moveTo(tx - 14, by + h - 4);
-    ctx.lineTo(tx + (right ? -26 : 26), by + h + 30);
-    ctx.lineTo(tx + 14, by + h - 4);
-    ctx.closePath();
+    const minX = px + BUBBLE_PAD, maxX = px + PANEL - w - BUBBLE_PAD;
+    const minY = py + BUBBLE_PAD, maxY = Math.max(minY, py + PANEL - captionHeight(p) - h - BUBBLE_PAD);
+    const clampX = (v) => Math.min(Math.max(v, minX), Math.max(minX, maxX));
+    const clampY = (v) => Math.min(Math.max(v, minY), maxY);
+    const people = peopleInPanel(p, px, py);
+    let bx, by;
+
+    if (p.bubblePos) {
+      bx = clampX(px + p.bubblePos.x * PANEL);
+      by = clampY(py + p.bubblePos.y * PANEL);
+    } else if (people.length) {
+      // 후보 자리 7×6칸 중 사람(특히 얼굴=상자 위쪽 35%)을 가장 덜 가리는 곳
+      let best = null;
+      for (let gy = 0; gy < 6; gy++) {
+        for (let gx = 0; gx < 7; gx++) {
+          const cx = clampX(minX + (maxX - minX) * (gx / 6));
+          const cy = clampY(minY + (maxY - minY) * (gy / 5));
+          const r = { x: cx, y: cy, w, h };
+          let cost = 0;
+          people.forEach((b, n) => {
+            const head = { x: b.x, y: b.y, w: b.w, h: b.h * 0.35 };
+            const weight = n === 0 ? 1 : 0.6; // 주인공을 더 피한다
+            cost += weight * (overlapArea(r, b) + 3 * overlapArea(r, head));
+          });
+          cost += (cy - py) * 2; // 같으면 위쪽이 자연스러움
+          if (!best || cost < best.cost) best = { cost, cx, cy };
+        }
+      }
+      bx = best.cx; by = best.cy;
+    } else {
+      // 사람을 아직 못 찾았으면 예전처럼 위쪽 구석
+      bx = i % 2 === 1 ? clampX(px + PANEL - w - 18) : clampX(px + 18);
+      by = clampY(py + 18);
+    }
+
+    // 꼬리: 주인공 얼굴 쪽을 향하게
+    const hero = people[0];
+    const target = hero
+      ? { x: hero.x + hero.w / 2, y: hero.y + hero.h * 0.18 }
+      : { x: bx + w * (i % 2 === 1 ? 0.3 : 0.7) + (i % 2 === 1 ? -26 : 26), y: by + h + TAIL };
+    const below = target.y > by + h / 2;
+    const edgeY = below ? by + h : by;
+    const baseX = Math.min(Math.max(target.x, bx + 36), bx + w - 36);
+    const dx = target.x - baseX, dy = target.y - edgeY;
+    const len = Math.hypot(dx, dy) || 1;
+    const tl = Math.min(TAIL, len * 0.6);
+    const tail = { baseX, edgeY, tipX: baseX + (dx / len) * tl, tipY: edgeY + (dy / len) * Math.max(tl, 18) * (below ? 1 : 1), below };
+    return { bx, by, w, h, lines, lh, tail };
+  }
+
+  function drawBubble(L) {
+    const { bx, by, w, h, lines, lh, tail } = L;
+    ctx.font = FONT_BUBBLE;
     ctx.fillStyle = '#fff';
     ctx.strokeStyle = '#1b1b1b';
     ctx.lineWidth = 3;
+    const inset = tail.below ? -4 : 4;
+    ctx.beginPath();
+    ctx.moveTo(tail.baseX - 14, tail.edgeY + inset);
+    ctx.lineTo(tail.tipX, tail.tipY);
+    ctx.lineTo(tail.baseX + 14, tail.edgeY + inset);
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
     roundRect(bx, by, w, h, 28);
     ctx.fill();
     ctx.stroke();
     // 꼬리와 몸통 사이 선 지우기
-    ctx.fillRect(tx - 12, by + h - 6, 24, 5);
+    ctx.fillRect(tail.baseX - 12, tail.below ? tail.edgeY - 6 : tail.edgeY + 1, 24, 5);
     ctx.fillStyle = '#1b1b1b';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -431,8 +508,13 @@ import { toast, ask } from './ui.js';
       ctx.save();
       ctx.beginPath(); ctx.rect(x, y, PANEL, PANEL); ctx.clip();
       if (p.img) drawCover(p.img, x, y, PANEL); else drawPlaceholder(p, i, x, y);
-      if (p.dialogue) drawBubble(p.dialogue, x, y, i % 2 === 1);
       if (p.caption) drawCaption(p.caption, x, y);
+      bubbleRects[i] = null;
+      if (p.dialogue) {
+        const L = layoutBubble(p, i, x, y);
+        drawBubble(L);
+        bubbleRects[i] = { x: L.bx, y: L.by, w: L.w, h: L.h, px: x, py: y };
+      }
       ctx.restore();
       ctx.strokeStyle = '#1b1b1b';
       ctx.lineWidth = 5;
@@ -549,6 +631,7 @@ import { toast, ask } from './ui.js';
       p.seed = state.seed; // 같은 seed → 캐릭터 일관성 ↑
       p.img = null;
       p.hero = null;
+      p.bubblePos = null;
       p.status = 'idle';
       p.msg = '';
     });
@@ -556,6 +639,54 @@ import { toast, ask } from './ui.js';
     await renderComic();
     state.panels.forEach((_, i) => enqueue(i));
   }
+
+  // ---------- 말풍선 끌어서 옮기기 (마우스·손가락) ----------
+  let drag = null;
+  function canvasPoint(e) {
+    const r = el.canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
+  }
+  function hitBubble(pt) {
+    for (let i = 0; i < 4; i++) {
+      const b = bubbleRects[i];
+      if (b && pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= b.y && pt.y <= b.y + b.h) return i;
+    }
+    return -1;
+  }
+  // 말풍선을 눌렀을 때만 화면 스크롤을 막는다 (나머지 곳은 평소처럼 스크롤)
+  el.canvas.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    if (t && hitBubble(canvasPoint(t)) >= 0) e.preventDefault();
+  }, { passive: false });
+  el.canvas.addEventListener('pointerdown', (e) => {
+    const pt = canvasPoint(e);
+    const i = hitBubble(pt);
+    if (i < 0) return;
+    const b = bubbleRects[i];
+    drag = { i, offX: pt.x - b.x, offY: pt.y - b.y, moved: false };
+    el.canvas.setPointerCapture(e.pointerId);
+    el.canvas.classList.add('dragging');
+  });
+  el.canvas.addEventListener('pointermove', (e) => {
+    const pt = canvasPoint(e);
+    if (!drag) { el.canvas.classList.toggle('can-drag', hitBubble(pt) >= 0); return; }
+    const b = bubbleRects[drag.i];
+    state.panels[drag.i].bubblePos = { x: (pt.x - drag.offX - b.px) / PANEL, y: (pt.y - drag.offY - b.py) / PANEL };
+    drag.moved = true;
+    renderComic();
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    if (drag.moved && !el.btnDownload.disabled) el.btnSave.disabled = false;
+    drag = null;
+    el.canvas.classList.remove('dragging');
+  };
+  el.canvas.addEventListener('pointerup', endDrag);
+  el.canvas.addEventListener('pointercancel', endDrag);
+  el.btnBubbleAuto.addEventListener('click', () => {
+    state.panels.forEach((p) => { p.bubblePos = null; });
+    renderComic();
+  });
 
   // ---------- 다운로드 / 갤러리 ----------
   function download() {
@@ -685,6 +816,7 @@ import { toast, ask } from './ui.js';
     p.seed = randSeed();
     p.img = null;
     p.hero = null;
+    p.bubblePos = null;
     el.heroStatus.classList.add('hidden');
     el.btnDownload.disabled = true;
     el.btnSave.disabled = true;
@@ -727,7 +859,7 @@ import { toast, ask } from './ui.js';
     renderGallery();
   });
 
-  if (new URLSearchParams(location.search).has('debug')) window.comicDiary = { state, imageUrl };
+  if (new URLSearchParams(location.search).has('debug')) window.comicDiary = { state, imageUrl, renderComic };
   renderGallery();
 
   // ---------- 로그인 ----------

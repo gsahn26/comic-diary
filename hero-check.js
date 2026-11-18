@@ -68,7 +68,7 @@ function pickPerson(out) {
     const cx = d[i], cy = d[N + i], w = d[2 * N + i], h = d[3 * N + i];
     boxes.push({ x: cx - w / 2, y: cy - h / 2, w, h, s });
   }
-  if (!boxes.length) return { count: 0, box: null };
+  if (!boxes.length) return { count: 0, box: null, all: [] };
   // 겹치는 상자 정리(NMS)
   boxes.sort((a, b) => b.s - a.s);
   const keep = [];
@@ -77,7 +77,7 @@ function pickPerson(out) {
   }
   // 크기 × 확신도가 가장 큰 사람 = 주인공으로 본다
   const main = keep.reduce((a, b) => (b.w * b.h * b.s > a.w * a.h * a.s ? b : a));
-  return { count: keep.length, box: main };
+  return { count: keep.length, box: main, all: keep };
 }
 
 function iou(a, b) {
@@ -117,7 +117,8 @@ const overlap = (a, b) => a.reduce((acc, v, i) => acc + Math.min(v, b[i]), 0);
  * 4컷 이미지를 검사한다.
  * @param {HTMLImageElement[]} images
  * @param {(msg:string)=>void} [onProgress]
- * @returns {Promise<{ok:boolean, panels:{found:boolean, people:number, score:number, same:number|null, verdict:'ok'|'none'|'diff'}[], summary:string}>}
+ * @returns {Promise<{ok:boolean, panels:{found:boolean, people:number, score:number, same:number|null, verdict:'ok'|'none'|'diff', boxes:{x:number,y:number,w:number,h:number}[]}[], summary:string}>}
+ *   boxes: 사람 상자(원본 그림 기준 0~1), 첫 번째가 주인공
  */
 export async function checkHero(images, onProgress) {
   onProgress?.('주인공 검사 모델 불러오는 중… (처음 한 번만, 약 6MB)');
@@ -128,9 +129,13 @@ export async function checkHero(images, onProgress) {
     onProgress?.(`${i + 1}번 컷에서 주인공 찾는 중…`);
     const lb = letterbox(images[i]);
     const res = await session.run({ [session.inputNames[0]]: toTensor(ort, lb.ctx) });
-    const { count, box } = pickPerson(res[session.outputNames[0]]);
+    const { count, box, all } = pickPerson(res[session.outputNames[0]]);
     sigs.push(box ? colorSignature(lb.ctx, box) : null);
-    panels.push({ found: !!box, people: count, score: box ? box.s : 0, same: null, verdict: box ? 'ok' : 'none' });
+    // 말풍선 자리 잡기용: 사람 상자를 원본 그림 기준 0~1 비율로 바꿔 둔다 (주인공이 맨 앞)
+    const nw = (images[i].naturalWidth || images[i].width) * lb.r, nh = (images[i].naturalHeight || images[i].height) * lb.r;
+    const norm = (b) => ({ x: (b.x - lb.dx) / nw, y: (b.y - lb.dy) / nh, w: b.w / nw, h: b.h / nh });
+    const boxes = box ? [box, ...all.filter((b) => b !== box)].map(norm) : [];
+    panels.push({ found: !!box, people: count, score: box ? box.s : 0, same: null, verdict: box ? 'ok' : 'none', boxes });
   }
 
   // 각 컷의 색 분포를 나머지 컷들과 비교 → 가장 비슷한 두 컷과의 평균
