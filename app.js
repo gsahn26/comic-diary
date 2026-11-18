@@ -369,46 +369,101 @@ import { toast, ask } from './ui.js';
   const overlapArea = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x))
     * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
 
+  // 말풍선 모양 후보: 글자 크기 × 한 줄 너비. 빈 곳에 맞는 모양을 고른다.
+  const BUBBLE_FONTS = [36, 32, 28, 25, 22];
+  const BUBBLE_WIDTHS = [0.62, 0.78, 0.9, 0.5, 0.4, 0.32, 0.26];
+  const bubbleFont = (size) => `700 ${size}px Gaegu`;
+
+  function bubbleShapes(text) {
+    const shapes = [];
+    for (const size of BUBBLE_FONTS) {
+      ctx.font = bubbleFont(size);
+      const lh = Math.round(size * 1.12);
+      const padX = Math.round(size * 0.6), padY = Math.round(size * 0.36);
+      for (const wf of BUBBLE_WIDTHS) {
+        const maxLines = wf < 0.45 ? 5 : 4;
+        const lines = wrapText(text, PANEL * wf, maxLines);
+        const squash = (t) => t.replace(/\s+/g, '');
+        const cut = squash(lines.join('')) !== squash(text); // 다 못 들어가서 잘림
+        // 낱말 중간에서 줄이 바뀐 횟수 ("뛰어가/다가" 같은 어색한 줄바꿈)
+        let broken = 0, pos = 0;
+        lines.slice(0, -1).forEach((l) => {
+          const at = text.indexOf(l, pos);
+          if (at < 0) return;
+          const end = at + l.length;
+          if (text[end] && !/\s/.test(text[end])) broken++;
+          pos = end;
+        });
+        const w = Math.max(...lines.map((l) => ctx.measureText(l).width)) + padX * 2;
+        const h = lines.length * lh + padY * 2;
+        if (w > PANEL - BUBBLE_PAD * 2) continue;
+        if (shapes.some((o) => o.size === size && o.lines.join('\n') === lines.join('\n'))) continue; // 같은 모양 중복 제거
+        shapes.push({ size, lh, padY, lines, w, h, cut, broken });
+      }
+    }
+    return shapes;
+  }
+
+  /** 이 자리·모양이 사람을 얼마나 가리는지 (얼굴은 3배로 친다) */
+  function coverCost(r, people) {
+    let cost = 0;
+    people.forEach((b, n) => {
+      const head = { x: b.x, y: b.y, w: b.w, h: b.h * 0.35 };
+      const weight = n === 0 ? 1 : 0.6; // 주인공을 더 피한다
+      cost += weight * (overlapArea(r, b) + 3 * overlapArea(r, head));
+    });
+    return cost;
+  }
+
   function layoutBubble(p, i, px, py) {
-    ctx.font = FONT_BUBBLE;
-    const lines = wrapText(p.dialogue, PANEL * 0.62, 3);
-    const lh = 40;
-    const w = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 44;
-    const h = lines.length * lh + 26;
-    const minX = px + BUBBLE_PAD, maxX = px + PANEL - w - BUBBLE_PAD;
-    const minY = py + BUBBLE_PAD, maxY = Math.max(minY, py + PANEL - captionHeight(p) - h - BUBBLE_PAD);
-    const clampX = (v) => Math.min(Math.max(v, minX), Math.max(minX, maxX));
-    const clampY = (v) => Math.min(Math.max(v, minY), maxY);
+    const capH = captionHeight(p);
     const people = peopleInPanel(p, px, py);
-    let bx, by;
+    const shapes = bubbleShapes(p.dialogue);
+    const area = (shape) => {
+      const minX = px + BUBBLE_PAD, maxX = Math.max(minX, px + PANEL - shape.w - BUBBLE_PAD);
+      const minY = py + BUBBLE_PAD, maxY = Math.max(minY, py + PANEL - capH - shape.h - BUBBLE_PAD);
+      return {
+        minX, maxX, minY, maxY,
+        cx: (v) => Math.min(Math.max(v, minX), maxX),
+        cy: (v) => Math.min(Math.max(v, minY), maxY),
+      };
+    };
+    // 글자가 작아지거나 잘리는 것도 비용으로 친다 → 가리지 않는 한 큰 글자를 고른다
+    const shapeCost = (s) => (36 - s.size) * 450 + (s.cut ? 1e7 : 0) + s.broken * 4000 + s.lines.length * 120;
+    let best = null;
+    const consider = (shape, bx, by, extra = 0) => {
+      const cost = coverCost({ x: bx, y: by, w: shape.w, h: shape.h }, people) + shapeCost(shape) + extra;
+      if (!best || cost < best.cost) best = { cost, shape, bx, by };
+    };
 
     if (p.bubblePos) {
-      bx = clampX(px + p.bubblePos.x * PANEL);
-      by = clampY(py + p.bubblePos.y * PANEL);
+      // 손으로 옮긴 자리: 그 자리(가운데 기준)에서 사람을 덜 가리는 모양을 고른다
+      const ax = px + p.bubblePos.x * PANEL, ay = py + p.bubblePos.y * PANEL;
+      for (const s of shapes) {
+        const A = area(s);
+        consider(s, A.cx(ax - s.w / 2), A.cy(ay - s.h / 2));
+      }
     } else if (people.length) {
-      // 후보 자리 7×6칸 중 사람(특히 얼굴=상자 위쪽 35%)을 가장 덜 가리는 곳
-      let best = null;
-      for (let gy = 0; gy < 6; gy++) {
-        for (let gx = 0; gx < 7; gx++) {
-          const cx = clampX(minX + (maxX - minX) * (gx / 6));
-          const cy = clampY(minY + (maxY - minY) * (gy / 5));
-          const r = { x: cx, y: cy, w, h };
-          let cost = 0;
-          people.forEach((b, n) => {
-            const head = { x: b.x, y: b.y, w: b.w, h: b.h * 0.35 };
-            const weight = n === 0 ? 1 : 0.6; // 주인공을 더 피한다
-            cost += weight * (overlapArea(r, b) + 3 * overlapArea(r, head));
-          });
-          cost += (cy - py) * 2; // 같으면 위쪽이 자연스러움
-          if (!best || cost < best.cost) best = { cost, cx, cy };
+      // 모양마다 7×6칸 자리를 살펴서 가장 덜 가리는 모양+자리
+      for (const s of shapes) {
+        const A = area(s);
+        for (let gy = 0; gy < 6; gy++) {
+          for (let gx = 0; gx < 7; gx++) {
+            const bx = A.cx(A.minX + (A.maxX - A.minX) * (gx / 6));
+            const by = A.cy(A.minY + (A.maxY - A.minY) * (gy / 5));
+            consider(s, bx, by, (by - py) * 2); // 같으면 위쪽이 자연스러움
+          }
         }
       }
-      bx = best.cx; by = best.cy;
     } else {
-      // 사람을 아직 못 찾았으면 예전처럼 위쪽 구석
-      bx = i % 2 === 1 ? clampX(px + PANEL - w - 18) : clampX(px + 18);
-      by = clampY(py + 18);
+      // 사람을 아직 못 찾았으면 기본 모양으로 위쪽 구석
+      const s = shapes.find((o) => !o.cut) || shapes[0];
+      const A = area(s);
+      best = { shape: s, bx: A.cx(i % 2 === 1 ? px + PANEL - s.w - 18 : px + 18), by: A.cy(py + 18) };
     }
+
+    const { shape, bx, by } = best;
+    const { w, h } = shape;
 
     // 꼬리: 주인공 얼굴 쪽을 향하게
     const hero = people[0];
@@ -417,37 +472,39 @@ import { toast, ask } from './ui.js';
       : { x: bx + w * (i % 2 === 1 ? 0.3 : 0.7) + (i % 2 === 1 ? -26 : 26), y: by + h + TAIL };
     const below = target.y > by + h / 2;
     const edgeY = below ? by + h : by;
-    const baseX = Math.min(Math.max(target.x, bx + 36), bx + w - 36);
+    const r = Math.min(28, h / 2);
+    const baseX = Math.min(Math.max(target.x, bx + r + 12), bx + w - r - 12);
     const dx = target.x - baseX, dy = target.y - edgeY;
     const len = Math.hypot(dx, dy) || 1;
-    const tl = Math.min(TAIL, len * 0.6);
-    const tail = { baseX, edgeY, tipX: baseX + (dx / len) * tl, tipY: edgeY + (dy / len) * Math.max(tl, 18) * (below ? 1 : 1), below };
-    return { bx, by, w, h, lines, lh, tail };
+    const tl = Math.max(Math.min(TAIL, len * 0.6), 18);
+    const tail = { baseX, edgeY, tipX: baseX + (dx / len) * tl, tipY: edgeY + (dy / len) * tl, below };
+    return { bx, by, w, h, r, lines: shape.lines, lh: shape.lh, padY: shape.padY, font: bubbleFont(shape.size), tail };
   }
 
   function drawBubble(L) {
-    const { bx, by, w, h, lines, lh, tail } = L;
-    ctx.font = FONT_BUBBLE;
+    const { bx, by, w, h, r, lines, lh, padY, font, tail } = L;
+    ctx.font = font;
     ctx.fillStyle = '#fff';
     ctx.strokeStyle = '#1b1b1b';
     ctx.lineWidth = 3;
+    const half = Math.min(14, (w - 2 * r) / 2 - 2);
     const inset = tail.below ? -4 : 4;
     ctx.beginPath();
-    ctx.moveTo(tail.baseX - 14, tail.edgeY + inset);
+    ctx.moveTo(tail.baseX - half, tail.edgeY + inset);
     ctx.lineTo(tail.tipX, tail.tipY);
-    ctx.lineTo(tail.baseX + 14, tail.edgeY + inset);
+    ctx.lineTo(tail.baseX + half, tail.edgeY + inset);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-    roundRect(bx, by, w, h, 28);
+    roundRect(bx, by, w, h, r);
     ctx.fill();
     ctx.stroke();
     // 꼬리와 몸통 사이 선 지우기
-    ctx.fillRect(tail.baseX - 12, tail.below ? tail.edgeY - 6 : tail.edgeY + 1, 24, 5);
+    ctx.fillRect(tail.baseX - half + 2, tail.below ? tail.edgeY - 6 : tail.edgeY + 1, half * 2 - 4, 5);
     ctx.fillStyle = '#1b1b1b';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    lines.forEach((l, k) => ctx.fillText(l, bx + w / 2, by + 13 + lh / 2 + k * lh + 2));
+    lines.forEach((l, k) => ctx.fillText(l, bx + w / 2, by + padY + lh / 2 + k * lh + 2));
   }
 
   function drawCaption(text, px, py) {
@@ -663,7 +720,7 @@ import { toast, ask } from './ui.js';
     const i = hitBubble(pt);
     if (i < 0) return;
     const b = bubbleRects[i];
-    drag = { i, offX: pt.x - b.x, offY: pt.y - b.y, moved: false };
+    drag = { i, offX: pt.x - b.x, offY: pt.y - b.y, w: b.w, h: b.h, moved: false };
     el.canvas.setPointerCapture(e.pointerId);
     el.canvas.classList.add('dragging');
   });
@@ -671,7 +728,8 @@ import { toast, ask } from './ui.js';
     const pt = canvasPoint(e);
     if (!drag) { el.canvas.classList.toggle('can-drag', hitBubble(pt) >= 0); return; }
     const b = bubbleRects[drag.i];
-    state.panels[drag.i].bubblePos = { x: (pt.x - drag.offX - b.px) / PANEL, y: (pt.y - drag.offY - b.py) / PANEL };
+    // 저장은 말풍선 가운데 기준 (모양이 바뀌어도 손가락 아래에 머물게)
+    state.panels[drag.i].bubblePos = { x: (pt.x - drag.offX + drag.w / 2 - b.px) / PANEL, y: (pt.y - drag.offY + drag.h / 2 - b.py) / PANEL };
     drag.moved = true;
     renderComic();
   });
