@@ -5,5 +5,5 @@
  *
  * 두 값이 비어 있으면 로그인·공유 기능 없이 예전처럼 동작합니다.
  */
-export const SUPABASE_URL = '';      // 예) 'https://abcdefgh.supabase.co'
-export const SUPABASE_ANON_KEY = ''; // 예) 'eyJhbGciOi...' 또는 'sb_publishable_...'
+export const SUPABASE_URL = 'https://brxzaqzudwcetcrmqhhn.supabase.co';
+export const SUPABASE_ANON_KEY = 'sb_publishable_DCgssYdW_tiEuk7DmydNrQ_ordMjx5q'; // 공개용 키 (secret 키 아님)
