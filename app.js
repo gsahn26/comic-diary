@@ -9,6 +9,7 @@ import {
 } from './core.js';
 import { checkHero } from './hero-check.js';
 import { community } from './community.js';
+import { toast, ask } from './ui.js';
 
 (() => {
 
@@ -510,7 +511,7 @@ import { community } from './community.js';
     readEditor();
     if (!community.requireLogin({ diary: el.diary.value, hero: el.hero.value })) return;
     if (state.panels.some((p) => !p.scene)) {
-      alert('4컷 모두 장면을 적어 주세요.');
+      toast('4컷 모두 장면을 적어 주세요.', 'err');
       return;
     }
     state.job++;
@@ -559,7 +560,7 @@ import { community } from './community.js';
   // ---------- 다운로드 / 갤러리 ----------
   function download() {
     el.canvas.toBlob((blob) => {
-      if (!blob) return alert('이미지를 만들지 못했어요.');
+      if (!blob) return toast('이미지를 만들지 못했어요.', 'err');
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `네컷일기_${fileDate(state.date)}_${(state.title || '').replace(/[\\/:*?"<>|\s]+/g, '_')}.png`;
@@ -716,8 +717,11 @@ import { community } from './community.js';
 
   el.viewerClose.addEventListener('click', () => el.viewer.close());
   el.viewer.addEventListener('click', (e) => { if (e.target === el.viewer) el.viewer.close(); });
-  el.viewerDelete.addEventListener('click', () => {
-    if (!viewing || !confirm(`“${viewing.title}”을(를) 갤러리에서 지울까요?`)) return;
+  el.viewerDelete.addEventListener('click', async () => {
+    if (!viewing) return;
+    el.viewer.close();
+    const ok = await ask({ icon: '🗑', title: '내 갤러리에서 지울까요?', message: `“${viewing.title}” — 이 브라우저에서 지워져요.`, ok: '지우기', danger: true });
+    if (!ok) return;
     lsSet(LS_GALLERY, loadGallery().filter((it) => it.id !== viewing.id));
     el.viewer.close();
     renderGallery();

@@ -3,6 +3,7 @@
  * 이 파일은 화면만 담당한다. 사용자가 쓴 글은 전부 textContent로 넣어 XSS를 막는다.
  */
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
+import { toast, ask, askText, openSheet } from './ui.js';
 
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.3/+esm';
 const BUCKET = 'comics';
@@ -83,12 +84,12 @@ async function setUser(u) {
 }
 
 async function login() {
-  if (!sb) return alert('로그인 서버가 아직 설정되지 않았어요.');
+  if (!sb) return toast('로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 해 주세요.', 'err');
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } },
   });
-  if (error) alert(errText(error));
+  if (error) toast(errText(error), 'err');
 }
 
 async function logout() {
@@ -116,10 +117,22 @@ function renderAuth(msg) {
 /** 쓰기 전에 부른다. 로그인 돼 있으면 true. 아니면 안내 후 로그인으로 보낸다(일기 초안은 잠깐 보관). */
 function requireLogin(draft) {
   if (!enabled || user) return true;
-  if (confirm('네컷일기를 만들려면 구글 로그인이 필요해요.\n지금 로그인할까요? (쓰던 일기는 그대로 남아요)')) {
-    try { if (draft) sessionStorage.setItem(SS_DRAFT, JSON.stringify(draft)); } catch { /* 무시 */ }
-    login();
-  }
+  openSheet({
+    icon: '🔐',
+    title: '로그인이 필요해요',
+    message: '네컷일기를 만들고, 올리고, 하트를 누르려면 구글 로그인이 필요해요. 쓰던 일기는 그대로 남아요.',
+    buttons: [
+      {
+        label: '구글로 로그인', kind: 'google wide',
+        onclick: (close) => {
+          try { if (draft) sessionStorage.setItem(SS_DRAFT, JSON.stringify(draft)); } catch { /* 무시 */ }
+          close(true);
+          login();
+        },
+      },
+      { label: '나중에', value: false, kind: 'ghost wide' },
+    ],
+  });
   return false;
 }
 
@@ -133,7 +146,7 @@ function takeDraft() {
 
 // ---------- 공유하기 ----------
 function openShare(canvas, title) {
-  if (!enabled) return alert('공유 서버가 아직 설정되지 않았어요.');
+  if (!enabled) return toast('공유 서버가 아직 설정되지 않았어요.', 'err');
   if (!requireLogin()) return;
   const dlg = $('shareDialog');
   $('shareTitle').value = (title || '오늘의 일기').slice(0, 30);
@@ -287,32 +300,40 @@ async function toggleLike(c, isLiked, btn) {
   const res = isLiked
     ? await sb.from('likes').delete().eq('comic_id', c.id).eq('user_id', user.id)
     : await sb.from('likes').insert({ comic_id: c.id });
-  if (res.error && !/duplicate/i.test(res.error.message)) alert(errText(res.error));
+  if (res.error && !/duplicate/i.test(res.error.message)) toast(errText(res.error), 'err');
   renderBoard();
 }
 
 async function report(c) {
   if (!requireLogin()) return;
-  const reason = prompt(`“${c.title}”을(를) 신고할까요?\n이유를 짧게 적어 주세요. (신고가 3번 쌓이면 자동으로 숨겨져요)`, '');
+  const reason = await askText({
+    icon: '🚩', title: '이 작품을 신고할까요?',
+    message: `“${c.title}” — 이유를 짧게 적어 주세요. 신고가 3번 쌓이면 자동으로 숨겨져요.`,
+    placeholder: '예) 무서운 그림이에요', ok: '신고하기',
+  });
   if (reason === null) return;
   const { error } = await sb.from('reports').insert({ comic_id: c.id, reason: reason.trim().slice(0, 100) || null });
-  if (error) alert(errText(error)); else alert('신고했어요. 고마워요.');
+  if (error) toast(errText(error), 'err'); else toast('신고했어요. 고마워요.', 'ok');
   renderBoard();
 }
 
 async function remove(c, mine) {
   const who = mine ? '내 작품' : '(관리자) 이 작품';
-  if (!confirm(`${who} “${c.title}”을(를) 지울까요? 되돌릴 수 없어요.`)) return;
+  const ok = await ask({
+    icon: '🗑', title: `${who}을 지울까요?`,
+    message: `“${c.title}” — 지우면 되돌릴 수 없어요.`, ok: '지우기', danger: true,
+  });
+  if (!ok) return;
   const st = await sb.storage.from(BUCKET).remove([c.image_path]);
   if (st.error) console.warn(st.error);
   const { error } = await sb.from('comics').delete().eq('id', c.id);
-  if (error) alert(errText(error));
+  if (error) toast(errText(error), 'err'); else toast('지웠어요.', 'ok');
   renderBoard();
 }
 
 async function rpc(name, args) {
   const { error } = await sb.rpc(name, args);
-  if (error) alert(errText(error));
+  if (error) toast(errText(error), 'err');
   renderBoard();
 }
 
