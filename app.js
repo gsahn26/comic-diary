@@ -8,6 +8,7 @@ import {
   hasHangul, splitWith, translateWith, imageUrlFor, TEXT_API,
 } from './core.js';
 import { checkHero } from './hero-check.js';
+import { community } from './community.js';
 
 (() => {
 
@@ -45,7 +46,8 @@ import { checkHero } from './hero-check.js';
     title: $('title'), character: $('character'), panelEditors: $('panelEditors'),
     btnDraw: $('btnDraw'), btnBack: $('btnBack'),
     drawStatus: $('drawStatus'), heroStatus: $('heroStatus'), canvas: $('comic'), panelControls: $('panelControls'),
-    btnDownload: $('btnDownload'), btnSave: $('btnSave'), btnNew: $('btnNew'),
+    btnDownload: $('btnDownload'), btnSave: $('btnSave'), btnShare: $('btnShare'), btnNew: $('btnNew'),
+    loginNote: $('loginNote'),
     galleryGrid: $('galleryGrid'), galleryCount: $('galleryCount'),
     viewer: $('viewer'), viewerImg: $('viewerImg'), viewerDownload: $('viewerDownload'),
     viewerDelete: $('viewerDelete'), viewerClose: $('viewerClose'),
@@ -247,6 +249,7 @@ import { checkHero } from './hero-check.js';
     const all = done === 4;
     el.btnDownload.disabled = !all;
     el.btnSave.disabled = !all;
+    el.btnShare.disabled = !all;
     el.btnDraw.disabled = false;
     if (all) {
       updateDrawStatus('완성! PNG로 내려받거나 갤러리에 저장하세요. 마음에 안 드는 컷은 다시 그릴 수 있어요.', false, 'ok');
@@ -505,6 +508,7 @@ import { checkHero } from './hero-check.js';
 
   async function startDrawing() {
     readEditor();
+    if (!community.requireLogin({ diary: el.diary.value, hero: el.hero.value })) return;
     if (state.panels.some((p) => !p.scene)) {
       alert('4컷 모두 장면을 적어 주세요.');
       return;
@@ -517,6 +521,7 @@ import { checkHero } from './hero-check.js';
     el.btnDraw.disabled = true;
     el.btnDownload.disabled = true;
     el.btnSave.disabled = true;
+    el.btnShare.disabled = true;
     el.heroStatus.classList.add('hidden');
     el.panelControls.innerHTML = '';
     el.stepResult.classList.remove('hidden');
@@ -622,14 +627,16 @@ import { checkHero } from './hero-check.js';
 
   // ---------- 이벤트 ----------
   function switchView(view) {
-    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === view));
-    document.body.classList.toggle('gallery-mode', view === 'gallery');
+    document.querySelectorAll('.tab[data-view]').forEach((t) => t.classList.toggle('active', t.dataset.view === view));
+    document.body.dataset.view = view;
     if (view === 'gallery') renderGallery();
+    if (view === 'community') community.renderBoard();
     window.scrollTo({ top: 0 });
   }
-  document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => switchView(t.dataset.view)));
+  document.querySelectorAll('.tab[data-view]').forEach((t) => t.addEventListener('click', () => switchView(t.dataset.view)));
 
   el.btnSplit.addEventListener('click', async () => {
+    if (!community.requireLogin({ diary: el.diary.value, hero: el.hero.value })) return;
     const diary = el.diary.value.trim();
     if (diary.length < 10) {
       setStatus(el.splitStatus, '일기를 조금만 더 길게 써 주세요 (10자 이상).', 'err');
@@ -661,7 +668,10 @@ import { checkHero } from './hero-check.js';
       panels: Array.from({ length: 4 }, () => ({ scene: '', caption: '', dialogue: '' })),
     });
   }
-  el.btnManual.addEventListener('click', showManual);
+  el.btnManual.addEventListener('click', () => {
+    if (!community.requireLogin({ diary: el.diary.value, hero: el.hero.value })) return;
+    showManual();
+  });
 
   el.btnDraw.addEventListener('click', startDrawing);
   el.btnBack.addEventListener('click', () => { el.diary.focus(); el.diary.scrollIntoView({ behavior: 'smooth' }); });
@@ -677,6 +687,7 @@ import { checkHero } from './hero-check.js';
     el.heroStatus.classList.add('hidden');
     el.btnDownload.disabled = true;
     el.btnSave.disabled = true;
+    el.btnShare.disabled = true;
     enqueue(i);
     renderComic();
   });
@@ -690,6 +701,7 @@ import { checkHero } from './hero-check.js';
 
   el.btnDownload.addEventListener('click', download);
   el.btnSave.addEventListener('click', saveToGallery);
+  el.btnShare.addEventListener('click', () => community.openShare(el.canvas, state.title));
   el.btnNew.addEventListener('click', () => {
     state.job++;
     state.queue = [];
@@ -713,5 +725,17 @@ import { checkHero } from './hero-check.js';
 
   if (new URLSearchParams(location.search).has('debug')) window.comicDiary = { state, imageUrl };
   renderGallery();
+
+  // ---------- 로그인 ----------
+  const draft = community.takeDraft(); // 로그인하러 갔다 오기 전에 쓰던 일기 되살리기
+  if (draft) { el.diary.value = draft.diary || ''; el.hero.value = draft.hero || ''; }
+  const showLoginNote = (u) => el.loginNote.classList.toggle('hidden', !community.enabled || Boolean(u));
+  el.btnShare.classList.toggle('hidden', !community.enabled); // 서버 설정 전엔 공유 버튼 숨김
+  community.onAuth(showLoginNote);
+  showLoginNote(null);
+  community.init();
+  const startView = location.hash === '#community' ? 'community' : 'write';
+  switchView(startView);
+
   if (isLocalhostName()) setStatus(el.splitStatus, '참고: localhost 주소에서는 무료 AI가 막혀요. 127.0.0.1로 열어 주세요.', 'err');
 })();

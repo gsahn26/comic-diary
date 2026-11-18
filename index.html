@@ -20,19 +20,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-view="write">
   <header class="top">
     <h1>📔 네컷일기</h1>
     <nav>
       <button class="tab active" data-view="write">만들기</button>
-      <button class="tab" data-view="gallery">갤러리 <span id="galleryCount"></span></button>
+      <button class="tab" data-view="community">모두의 네컷</button>
+      <button class="tab" data-view="gallery">내 갤러리 <span id="galleryCount"></span></button>
     </nav>
+    <div id="authBox" class="auth"></div>
   </header>
 
   <main>
     <!-- 1. 일기 쓰기 -->
     <section id="step-write" class="card view-write">
       <h2><span class="num">1</span> 오늘의 일기</h2>
+      <p id="loginNote" class="login-note hidden">🔐 네컷일기를 만들려면 <b>구글 로그인</b>이 필요해요. 일기를 먼저 써 두고 버튼을 눌러도 돼요.</p>
       <label class="field">
         <span>일기</span>
         <textarea id="diary" rows="7" maxlength="1500" placeholder="예) 아침에 늦잠을 자서 버스를 놓쳤다. 뛰어가다 넘어졌는데 친구가 웃으면서 도와줬다. 점심엔 둘이서 떡볶이를 먹었고, 저녁엔 고양이랑 낮잠을 잤다."></textarea>
@@ -76,14 +79,28 @@
       <div id="panelControls" class="panel-controls"></div>
       <div class="row">
         <button id="btnDownload" class="primary" disabled>⬇️ PNG 다운로드</button>
-        <button id="btnSave" class="ghost" disabled>💾 갤러리에 저장</button>
+        <button id="btnShare" class="primary share" disabled>🌏 공유하기</button>
+        <button id="btnSave" class="ghost" disabled>💾 내 갤러리에 저장</button>
         <button id="btnNew" class="ghost">새 일기 쓰기</button>
       </div>
     </section>
 
+    <!-- 모두의 네컷 -->
+    <section id="community" class="card view-community">
+      <h2>🌏 모두의 네컷</h2>
+      <p class="hint">구경은 누구나, ❤️ 하트와 🚩 신고는 로그인하면 할 수 있어요. 한 사람이 작품마다 하트 1개!</p>
+      <div class="row sort-row">
+        <button class="tab active" data-sort="popular">🏆 인기순</button>
+        <button class="tab" data-sort="recent">🆕 최신순</button>
+        <button class="tab hidden" data-sort="mine">🙋 내 작품</button>
+      </div>
+      <p id="boardNote" class="status" role="status"></p>
+      <div id="boardGrid" class="board-grid"></div>
+    </section>
+
     <!-- 갤러리 -->
     <section id="gallery" class="card view-gallery">
-      <h2>내 네컷 갤러리</h2>
+      <h2>💾 내 네컷 갤러리</h2>
       <p class="hint">이 브라우저에만 저장돼요. 다른 기기에서는 보이지 않아요.</p>
       <div id="galleryGrid" class="gallery-grid"></div>
     </section>
@@ -96,6 +113,30 @@
       <button id="viewerDelete" class="ghost danger">삭제</button>
       <button id="viewerClose" class="ghost">닫기</button>
     </div>
+  </dialog>
+
+  <dialog id="shareDialog">
+    <form method="dialog" class="share-form">
+      <h2>🌏 네컷 공유하기</h2>
+      <label class="field"><span>제목</span><input id="shareTitle" type="text" maxlength="30" required /></label>
+      <label class="field"><span>닉네임 <small>(실명 대신 별명을 써 주세요)</small></span><input id="shareNick" type="text" maxlength="20" required placeholder="예) 떡볶이왕" /></label>
+      <fieldset class="field">
+        <span>누가 볼 수 있나요?</span>
+        <label class="radio"><input type="radio" name="vis" id="sharePublic" checked /> 🌏 모두에게 공개</label>
+        <label class="radio"><input type="radio" name="vis" id="sharePrivate" /> 🔒 나만 보기</label>
+      </fieldset>
+      <p class="hint">완성된 그림·제목·닉네임만 올라가요. 일기 원문은 올라가지 않아요.</p>
+      <p id="shareStatus" class="status" role="status"></p>
+      <div class="row">
+        <button id="shareSubmit" class="primary">올리기</button>
+        <button id="shareCancel" class="ghost">닫기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="boardViewer">
+    <img id="boardViewerImg" alt="" />
+    <div class="row"><button id="boardViewerClose" class="ghost">닫기</button></div>
   </dialog>
 
   <footer>
